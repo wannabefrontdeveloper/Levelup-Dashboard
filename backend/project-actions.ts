@@ -38,7 +38,7 @@ export async function createProject(prevState: ProjectState, formData: FormData)
   const session = await auth();
   const userEmail = session?.user?.email || '';
 
-  if (userEmail == '') {
+  if (userEmail === '') {
     return {
       message: 'Non User Error: Failed to Create Project.',
     };
@@ -46,12 +46,13 @@ export async function createProject(prevState: ProjectState, formData: FormData)
 
   try {
     const existingProject = await sql`SELECT * FROM projects WHERE name = ${name}`;
-    if (existingProject.rowCount > 0) {
+    // rowCount가 null일 수 있으므로 안전하게 체크
+    if (existingProject.rowCount !== null && existingProject.rowCount > 0) {
       return { message: 'Project name already exists.' };
     }
   } catch (error) {
     return {
-      message: 'Database Error: Failed to Create Project.',
+      message: 'Database Error: Failed to Check Existing Project.',
     };
   }
 

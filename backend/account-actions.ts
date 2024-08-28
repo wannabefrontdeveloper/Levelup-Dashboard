@@ -50,7 +50,8 @@ export async function signUp(prevState: string | undefined, formData: FormData) 
   try {
     // 이메일 중복 검사
     const existingUser = await sql`SELECT * FROM users WHERE email = ${email}`;
-    if (existingUser.rowCount > 0) {
+    // rowCount가 null일 수 있으므로 안전하게 체크
+    if (existingUser.rowCount !== null && existingUser.rowCount > 0) {
       return 'Email already exists.';
     }
 
